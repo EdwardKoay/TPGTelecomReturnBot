@@ -1,6 +1,6 @@
 from selenium import webdriver
 
-
+#fe
 path = "C:/Users/T6433677/PycharmProjects/pythonProject/geckodriver.exe"
 driver = webdriver.Firefox(path)
 driver.get("http://www.yahoo.com")
