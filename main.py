@@ -4,7 +4,7 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 import PySimpleGUI as sg
-import Selenium
+
 #
 # ------ Menu Definition ------ #
 
@@ -94,6 +94,7 @@ def main():
             CID = values['-INPUT CID-']
             SN = values['-INPUT S/N-']
             print("[LOG] You entered ", CN, CID, SN)
+            Excel.main()
             Selenium.main()
     window.close()
     exit(0)
