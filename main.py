@@ -4,7 +4,7 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 import PySimpleGUI as sg
-
+import Selenium
 #
 # ------ Menu Definition ------ #
 
@@ -21,22 +21,13 @@ def make_window(theme):
     headings = ["Name", "Score"]
 
     input_layout = [[sg.Menu(menu_def, key='-MENU-')],
+                    [sg.Radio('TPG', "RadioDemo", default=True, size=(10, 1), k='-R1-'),
+                     sg.Radio('iiNet', "RadioDemo", default=True, size=(10, 1), k='-R2-')],
                     [sg.Text('CN:'), sg.Input(key='-INPUT CN-')],
                     [sg.Text('CID:'), sg.Input(key='-INPUT CID-')],
                     [sg.Text('S/N|MAC:'), sg.Input(key='-INPUT S/N-')],
-                    [sg.Slider(orientation='h', key='-SKIDER-'),
-                     sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, enable_events=True, key='-GIF-IMAGE-'), ],
-                    [sg.Radio('TPG', "RadioDemo", default=True, size=(10, 1), k='-R1-'),
-                     sg.Radio('iiNet', "RadioDemo", default=True, size=(10, 1), k='-R2-')],
-                    [sg.Combo(values=('Combo 1', 'Combo 2', 'Combo 3'), default_value='Combo 1', readonly=True,
-                              k='-COMBO-'),
-                     sg.OptionMenu(values=('Option 1', 'Option 2', 'Option 3'), k='-OPTION MENU-'), ],
-                    [sg.Spin([i for i in range(1, 11)], initial_value=10, k='-SPIN-'), sg.Text('Spin')],
-                    [sg.Multiline(
-                        'Demo of a Multi-Line Text Element!\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7\nYou get the point.',
-                        size=(45, 5), k='-MLINE-')],
-                    [sg.Button('Run'), sg.Button('Clear'),
-                     sg.Button(image_data=sg.DEFAULT_BASE64_ICON, key='-LOGO-')]]
+                    [sg.Button('Run'), sg.Button('Clear')],
+                    [sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, enable_events=True, key='-GIF-IMAGE-')]]
 
     logging_layout = [[sg.Text("Anything printed will display here!")], [sg.Output(size=(60, 15), font='Courier 8')]]
 
@@ -94,8 +85,7 @@ def main():
             CID = values['-INPUT CID-']
             SN = values['-INPUT S/N-']
             print("[LOG] You entered ", CN, CID, SN)
-            Excel.main()
-            Selenium.main()
+            Selenium.main(CN, CID, SN)
     window.close()
     exit(0)
 
