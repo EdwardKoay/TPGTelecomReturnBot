@@ -1,12 +1,10 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
 import PySimpleGUI as sg
 import Selenium
+
+
 #
 # ------ Menu Definition ------ #
+# Table Data
 
 def make_window(theme):
     sg.theme(theme)
@@ -14,18 +12,14 @@ def make_window(theme):
     menu_def = [
         ['&Help', ['&About...']]]
 
-    right_click_menu_def = [[], ['Nothing', 'More Nothing', 'Exit']]
-
-    # Table Data
-    data = [["John", 10], ["Jen", 5]]
-    headings = ["Name", "Score"]
+    right_click_menu_def = [[], ['Paste', 'Exit']]
 
     input_layout = [[sg.Menu(menu_def, key='-MENU-')],
-                    [sg.Radio('TPG', "RadioDemo", default=True, size=(10, 1), k='-R1-'),
+                    [sg.Radio('TPG', "RadioDemo", default=False, size=(10, 1), k='-R1-'),
                      sg.Radio('iiNet', "RadioDemo", default=True, size=(10, 1), k='-R2-')],
-                    [sg.Text('CN:'), sg.Input(key='-INPUT CN-')],
-                    [sg.Text('CID:'), sg.Input(key='-INPUT CID-')],
-                    [sg.Text('S/N|MAC:'), sg.Input(key='-INPUT S/N-')],
+                    [sg.Text('CN:', size=7), sg.Input(key='-INPUT consignment_note-')],
+                    [sg.Text('CID:', size=7), sg.Input(key='-INPUT customer_id-')],
+                    [sg.Text('S/N|MAC:', size=7), sg.Input(key='-INPUT serial_number-')],
                     [sg.Button('Run'), sg.Button('Clear')],
                     [sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, enable_events=True, key='-GIF-IMAGE-')]]
 
@@ -40,6 +34,7 @@ def make_window(theme):
 
     layout = [[sg.Text('Returns Program', size=(38, 1), justification='center', font=("Helvetica", 16),
                        relief=sg.RELIEF_RIDGE, k='-TEXT HEADING-', enable_events=True)]]
+
     layout += [[sg.TabGroup([[sg.Tab('Input Elements', input_layout),
                               sg.Tab('Output Screen', logging_layout),
                               sg.Tab('Theming', theme_layout)]], key='-TAB GROUP-')]]
@@ -48,14 +43,16 @@ def make_window(theme):
 
 
 def main():
-    CN = 'CN'
-    CID = 'CID'
-    SN = 'SN'
+    consignment_note = ''
+    customer_id = ''
+    serial_number = ''
+    keys_to_clear = ['-INPUT consignment_note-', '-INPUT customer_id-', '-INPUT serial_number-']
 
     window = make_window(sg.theme())
 
     while True:
         event, values = window.read(timeout=100)
+
         # keep an animation running so show things are happening
         window['-GIF-IMAGE-'].update_animation(sg.DEFAULT_BASE64_LOADING_GIF, time_between_frames=100)
         if event not in (sg.TIMEOUT_EVENT, sg.WIN_CLOSED):
@@ -68,12 +65,15 @@ def main():
             print("[LOG] Clicked Exit!")
             break
 
+        elif event == 'Paste':
+            print("[LOG] Clicked Paste!")
+
         elif event == 'About...':
             print("[LOG] Clicked About!")
             sg.popup('Eddywardward Return Bot', 'E-mail: Edward.Koay@tpgtelecom.com.au', '©2021 Edward Koay',
                      grab_anywhere=True)
 
-        elif event == "Set Theme":
+        elif event == 'Set Theme':
             print("[LOG] Clicked Set Theme!")
             theme_chosen = values['-THEME LISTBOX-'][0]
             print("[LOG] User Chose Theme: " + str(theme_chosen))
@@ -81,11 +81,17 @@ def main():
             window = make_window(theme_chosen)
 
         elif event == 'Run':
-            CN = values['-INPUT CN-']
-            CID = values['-INPUT CID-']
-            SN = values['-INPUT S/N-']
-            print("[LOG] You entered ", CN, CID, SN)
-            Selenium.main(CN, CID, SN)
+            consignment_note = values['-INPUT consignment_note-']
+            customer_id = values['-INPUT customer_id-']
+            serial_number = values['-INPUT serial_number-']
+            print("[LOG] Clicked Run!")
+            Selenium.run(consignment_note, customer_id, serial_number)
+
+        elif event == 'Clear':
+            print("[LOG] Clicked Clear!")
+            for key in keys_to_clear:
+                window[key]('')
+
     window.close()
     exit(0)
 
