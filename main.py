@@ -10,7 +10,7 @@ def make_window(theme):
     sg.theme(theme)
 
     menu_def = [
-        ['&Help', ['&About...']]]
+        ['&Menu', ['&About...']]]
 
     right_click_menu_def = [[], ['Paste', 'Exit']]
 
@@ -21,6 +21,7 @@ def make_window(theme):
                     [sg.Text('        CID:', size=(7, 1)), sg.Input(key='-INPUT customer_id-')],
                     [sg.Text(' SN/MAC:', size=(7, 1)), sg.Input(key='-INPUT serial_number-')],
                     [sg.Button('Run'), sg.Button('Clear')],
+                    [sg.Button('Keep on Top'), sg.Button('Not Keep on Top')],
                     [sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, enable_events=True, key='-GIF-IMAGE-')]]
 
     logging_layout = [[sg.Text("Anything printed will display here!")], [sg.Output(size=(60, 15), font='Courier 8')]]
@@ -39,13 +40,15 @@ def make_window(theme):
                               sg.Tab('Output Screen', logging_layout),
                               sg.Tab('Theming', theme_layout)]], key='-TAB GROUP-')]]
 
-    return sg.Window('Eddywardward Return Bot 0.1', layout, right_click_menu=right_click_menu_def)
+    return sg.Window('Eddywardward Return Bot 0.1', layout, keep_on_top=True, finalize=True, right_click_menu=right_click_menu_def)
+
 
 def main():
     consignment_note = ''
     customer_id = ''
     serial_number = ''
     isp_checker = False
+    setting = {'Keep on Top': 1, 'Not Keep on Top': 0}
     keys_to_clear = ['-INPUT consignment_note-', '-INPUT customer_id-', '-INPUT serial_number-']
 
     window = make_window(sg.theme())
@@ -92,6 +95,9 @@ def main():
             print("[LOG] Clicked Clear!")
             for key in keys_to_clear:
                 window[key]('')
+
+        elif event in setting:
+            window.TKroot.wm_attributes("-topmost", setting[event])
 
     window.close()
     exit(0)
