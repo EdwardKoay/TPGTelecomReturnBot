@@ -15,11 +15,11 @@ def make_window(theme):
     right_click_menu_def = [[], ['Paste', 'Exit']]
 
     input_layout = [[sg.Menu(menu_def, key='-MENU-')],
-                    [sg.Radio('TPG', "RadioDemo", default=False, size=(10, 1), k='-R1-'),
-                     sg.Radio('iiNet', "RadioDemo", default=True, size=(10, 1), k='-R2-')],
-                    [sg.Text('CN:', size=7), sg.Input(key='-INPUT consignment_note-')],
-                    [sg.Text('CID:', size=7), sg.Input(key='-INPUT customer_id-')],
-                    [sg.Text('S/N|MAC:', size=7), sg.Input(key='-INPUT serial_number-')],
+                    [sg.Radio('TPG', "RadioDemo", default=False, size=(10, 1), k='-INPUT R1-'),
+                     sg.Radio('iiNet', "RadioDemo", default=True, size=(10, 1), k='-INPUT R2-')],
+                    [sg.Text('     POST:', size=(7, 1)), sg.Input(key='-INPUT consignment_note-')],
+                    [sg.Text('        CID:', size=(7, 1)), sg.Input(key='-INPUT customer_id-')],
+                    [sg.Text(' SN/MAC:', size=(7, 1)), sg.Input(key='-INPUT serial_number-')],
                     [sg.Button('Run'), sg.Button('Clear')],
                     [sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, enable_events=True, key='-GIF-IMAGE-')]]
 
@@ -41,11 +41,11 @@ def make_window(theme):
 
     return sg.Window('Eddywardward Return Bot 0.1', layout, right_click_menu=right_click_menu_def)
 
-
 def main():
     consignment_note = ''
     customer_id = ''
     serial_number = ''
+    isp_checker = False
     keys_to_clear = ['-INPUT consignment_note-', '-INPUT customer_id-', '-INPUT serial_number-']
 
     window = make_window(sg.theme())
@@ -84,8 +84,9 @@ def main():
             consignment_note = values['-INPUT consignment_note-']
             customer_id = values['-INPUT customer_id-']
             serial_number = values['-INPUT serial_number-']
+            isp_checker = values['-INPUT R2-']
             print("[LOG] Clicked Run!")
-            Selenium.run(consignment_note, customer_id, serial_number)
+            Selenium.run(consignment_note, customer_id, serial_number, isp_checker)
 
         elif event == 'Clear':
             print("[LOG] Clicked Clear!")

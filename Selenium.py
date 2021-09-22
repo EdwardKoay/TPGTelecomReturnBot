@@ -4,12 +4,11 @@ from selenium.webdriver.firefox.options import Options
 import xlwings as xw
 
 
-def run(consignment_note, customer_id, serial_number):
+def run(consignment_note, customer_id, serial_number, isp_checker):
     options = Options()
-    options.binary_location = r'C:/Program Files/Mozilla Firefox/firefox.exe'
+    options.binary_location = r'C:\Users\T6433677\AppData\Local\Mozilla Firefox\firefox.exe'
     driver = webdriver.Firefox(firefox_options=options,
-                               executable_path=r'C:/Users/Aweso/PycharmProjects/TPGTelecomReturnBot/geckodriver.exe')
-    driver.get('https://google.com')
+                               executable_path=r'C:/Users/T6433677/PycharmProjects/TPGTelecomReturnBot/geckodriver.exe')
 
     # Gets the first letter of the serial number
     part_sn1 = serial_number[:1]
@@ -115,10 +114,9 @@ def run(consignment_note, customer_id, serial_number):
     if equip_found is True and len(customer_id) < 11 and auspost_check is False:
 
         # specifies excel spreadsheet to operate on
-        filename = 'C:/Users/Aweso/Desktop/2021 09 16 Returns.xlsm'
+        filename = 'C:/Users/T6433677/Desktop/Edward Returns.xlsm'
         wb = xw.Book(filename)
         ws = wb.sheets[0]
-        ws.screen_updating = False
 
         # Sets variables
         staff_name = ws.range('K3').value
@@ -130,7 +128,15 @@ def run(consignment_note, customer_id, serial_number):
         ws.range('H' + below_last_row).value = consignment_note
         ws.range('C' + below_last_row).value = customer_id
         ws.range('K' + below_last_row).value = staff_name
-        ws.screen_updating = True
+        if isp_checker is True:
+            driver.get('https://onewh.it.tpgtelecom.com.au:8200/OneWh/wh/orders/order_query.html')
+            driver.find_element_by_xpath("//input[@id='customerId']").send_keys(customer_id)
+            driver.find_element_by_xpath(
+                "/html/body/div/div/div[1]/div/div[2]/form/div[6]/div/div/div[4]/button").click()
+            driver.find_element_by_xpath(
+                "/html/body/div/div/div[3]/div[1]/table/tbody/tr[2]/td[8]/button").click()
+        elif isp_checker is False:
+            driver.get('https://blade.tpg.com.au/cgi-bin/ias.cgi?scr=user_query.cgi')
     else:
         print("[LOG] ERROR, Double Check Inputs")
 
