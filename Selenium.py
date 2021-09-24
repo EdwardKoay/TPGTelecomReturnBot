@@ -18,9 +18,17 @@ def run(consignment_note, customer_id, serial_number, isp_checker):
     part_sn3 = serial_number[:3]
 
     # Defines variables
+    staff_name = 'Edward'
     modem_type = ''
+    username = ''
     auspost_check = False
     equip_found = False
+
+    columns = {'A': serial_number,
+               'B': modem_type,
+               'H': consignment_note,
+               'C': customer_id,
+               'K': 'Edward'}
 
     # Finds the model of the modem/router and sets modem/router type
     if part_sn3 == '984':
@@ -118,16 +126,9 @@ def run(consignment_note, customer_id, serial_number, isp_checker):
         wb = xw.Book(filename)
         ws = wb.sheets[0]
 
-        # Sets variables
-        staff_name = ws.range('K3').value
+        # sets variables
         below_last_row = str(ws.range(1, 1).end('down').row + 1)
 
-        # sets the specific variables into the correct column and row of cells
-        ws.range('A' + below_last_row).value = serial_number
-        ws.range('B' + below_last_row).value = modem_type
-        ws.range('H' + below_last_row).value = consignment_note
-        ws.range('C' + below_last_row).value = customer_id
-        ws.range('K' + below_last_row).value = staff_name
         if isp_checker is True:
             driver.get('https://onewh.it.tpgtelecom.com.au:8200/OneWh/wh/orders/order_query.html')
             driver.find_element_by_xpath("//input[@id='customerId']").send_keys(customer_id)
@@ -137,6 +138,25 @@ def run(consignment_note, customer_id, serial_number, isp_checker):
                 "/html/body/div/div/div[3]/div[1]/table/tbody/tr[2]/td[8]/button").click()
         elif isp_checker is False:
             driver.get('https://blade.tpg.com.au/cgi-bin/ias.cgi?scr=user_query.cgi')
+            driver.find_element_by_xpath(
+                "/html/body/form/center/p[2]/table/tbody/tr[2]/td[2]/table/tbody/tr[1]/td[2]/input").send_keys(customer_id)
+            driver.find_element_by_xpath(
+                "/html/body/form/center/p[2]/table/tbody/tr[1]/td/input[1]").click()
+            driver.find_element_by_xpath(
+                "/html/body/form/center/p[3]/input").send_keys('edko')
+            driver.find_element_by_xpath(
+                "/html/body/form/center/p[4]/input").send_keys('Temp1234')
+            driver.find_element_by_xpath(
+                "/html/body/form/center/p[6]/input[4]").click()
+            username = driver.find_element_by_xpath(
+                "/html/body/center/table/tbody/tr[21]/td[2]/b").text
+        # sets the specific variables into the correct column and row of cells
+        ws.range(int(below_last_row), 1).value = serial_number
+        ws.range('B' + below_last_row).value = modem_type
+        ws.range('C' + below_last_row).value = customer_id
+        ws.range('D' + below_last_row).value = username
+        ws.range('H' + below_last_row).value = consignment_note
+        ws.range('K' + below_last_row).value = staff_name
     else:
         print("[LOG] ERROR, Double Check Inputs")
 
