@@ -4,6 +4,37 @@ from selenium.webdriver.firefox.options import Options
 import xlwings as xw
 
 
+def covid_screening():
+    options = Options()
+    options.binary_location = r'C:\Users\T6433677\AppData\Local\Mozilla Firefox\firefox.exe'
+    driver = webdriver.Firefox(firefox_options=options,
+                               executable_path=r'C:/Users/T6433677/PycharmProjects/TPGTelecomReturnBot/geckodriver.exe')
+    driver.get('https://www.cognitoforms.com/TPGTelecomLimited1/macquarieparkcovid19screeningquestions')
+    driver.find_element_by_xpath(
+        "//*[@id='c-1-29']").send_keys('Edward')
+    driver.find_element_by_xpath(
+        "//*[@id='c-2-29']").send_keys('Koay')
+    driver.find_element_by_xpath(
+        "//*[@id='c-4-28']").send_keys('0413119663')
+    driver.find_element_by_xpath(
+        "//*[@id='c-5-26']").click()
+    driver.find_element_by_xpath(
+        "//*[@id='c-5-27']").click()
+    driver.find_element_by_xpath(
+        "//*[@id='c-6-23']").click()
+    driver.find_element_by_xpath(
+        "//*[@id='c-7-20']").click()
+    driver.find_element_by_xpath(
+        "//*[@id='c-8-17']").click()
+    driver.find_element_by_xpath(
+        "//*[@id='c-9-14']").click()
+    driver.find_element_by_xpath(
+        "//*[@id='c-11-8']").click()
+    driver.find_element_by_xpath(
+        "//*[@id='c-submit-button']").click()
+    driver.quit()
+
+
 def run(consignment_note, customer_id, serial_number, isp_checker):
     options = Options()
     options.binary_location = r'C:\Users\T6433677\AppData\Local\Mozilla Firefox\firefox.exe'
@@ -18,7 +49,6 @@ def run(consignment_note, customer_id, serial_number, isp_checker):
     part_sn3 = serial_number[:3]
 
     # Defines variables
-    staff_name = 'Edward'
     modem_type = ''
     username = ''
     auspost_check = False
@@ -57,6 +87,9 @@ def run(consignment_note, customer_id, serial_number, isp_checker):
         equip_found = True
     elif part_sn2 == '39':
         modem_type = 'NL1902'
+        equip_found = True
+    elif part_sn2 == 'SE':
+        modem_type = "NokiaGateway"
         equip_found = True
     elif part_sn2 == 'CP':
         modem_type = 'TG789'
@@ -127,7 +160,7 @@ def run(consignment_note, customer_id, serial_number, isp_checker):
         ws = wb.sheets[0]
 
         # sets variables
-        below_last_row = str(ws.range(1, 1).end('down').row + 1)
+        below_last_row = ws.range(1, 1).end('down').row + 1
 
         if isp_checker is True:
             driver.get('https://onewh.it.tpgtelecom.com.au:8200/OneWh/wh/orders/order_query.html')
@@ -136,10 +169,12 @@ def run(consignment_note, customer_id, serial_number, isp_checker):
                 "/html/body/div/div/div[1]/div/div[2]/form/div[6]/div/div/div[4]/button").click()
             driver.find_element_by_xpath(
                 "/html/body/div/div/div[3]/div[1]/table/tbody/tr[2]/td[8]/button").click()
+
         elif isp_checker is False:
             driver.get('https://blade.tpg.com.au/cgi-bin/ias.cgi?scr=user_query.cgi')
             driver.find_element_by_xpath(
-                "/html/body/form/center/p[2]/table/tbody/tr[2]/td[2]/table/tbody/tr[1]/td[2]/input").send_keys(customer_id)
+                "/html/body/form/center/p[2]/table/tbody/tr[2]/td[2]/table/tbody/tr[1]/td[2]/input").send_keys(
+                customer_id)
             driver.find_element_by_xpath(
                 "/html/body/form/center/p[2]/table/tbody/tr[1]/td/input[1]").click()
             driver.find_element_by_xpath(
@@ -150,13 +185,10 @@ def run(consignment_note, customer_id, serial_number, isp_checker):
                 "/html/body/form/center/p[6]/input[4]").click()
             username = driver.find_element_by_xpath(
                 "/html/body/center/table/tbody/tr[21]/td[2]/b").text
+
         # sets the specific variables into the correct column and row of cells
-        ws.range(int(below_last_row), 1).value = serial_number
-        ws.range('B' + below_last_row).value = modem_type
-        ws.range('C' + below_last_row).value = customer_id
-        ws.range('D' + below_last_row).value = username
-        ws.range('H' + below_last_row).value = consignment_note
-        ws.range('K' + below_last_row).value = staff_name
+        ws.range(below_last_row, 1).value = [serial_number, modem_type, customer_id, username]
+        ws.range(below_last_row, 8).value = consignment_note
     else:
         print("[LOG] ERROR, Double Check Inputs")
 

@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-import Selenium
+import web_automation
 
 
 #
@@ -10,7 +10,7 @@ def make_window(theme):
     sg.theme(theme)
 
     menu_def = [
-        ['&Menu', ['&About...']]]
+        ['&Menu', ['&About...', '&Keep on Top', '&Not Keep on Top']]]
 
     right_click_menu_def = [[], ['Paste', 'Exit']]
 
@@ -20,9 +20,9 @@ def make_window(theme):
                     [sg.Text('     POST:', size=(7, 1)), sg.Input(key='-INPUT consignment_note-')],
                     [sg.Text('        CID:', size=(7, 1)), sg.Input(key='-INPUT customer_id-')],
                     [sg.Text(' SN/MAC:', size=(7, 1)), sg.Input(key='-INPUT serial_number-')],
-                    [sg.Button('Run'), sg.Button('Clear')],
-                    [sg.Button('Keep on Top'), sg.Button('Not Keep on Top')],
-                    [sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, enable_events=True, key='-GIF-IMAGE-')]]
+                    [sg.Button('Run', size=(10, 1)), sg.Button('Clear', size=(10, 1))],
+                    [sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, enable_events=True, key='-GIF-IMAGE-')],
+                    [sg.Button('Covid Screening', size=(13, 1))]]
 
     logging_layout = [[sg.Text("Anything printed will display here!")], [sg.Output(size=(60, 15), font='Courier 8')]]
 
@@ -40,7 +40,7 @@ def make_window(theme):
                               sg.Tab('Output Screen', logging_layout),
                               sg.Tab('Theming', theme_layout)]], key='-TAB GROUP-')]]
 
-    return sg.Window('Eddywardward Return Bot 0.1', layout, keep_on_top=True, finalize=True, right_click_menu=right_click_menu_def)
+    return sg.Window('Eddywardward Return Bot V0.7', layout, keep_on_top=True, finalize=True, right_click_menu=right_click_menu_def)
 
 
 def main():
@@ -84,12 +84,16 @@ def main():
             window = make_window(theme_chosen)
 
         elif event == 'Run':
+            print("[LOG] Clicked Run!")
             consignment_note = values['-INPUT consignment_note-']
             customer_id = values['-INPUT customer_id-']
             serial_number = values['-INPUT serial_number-']
             isp_checker = values['-INPUT R2-']
-            print("[LOG] Clicked Run!")
-            Selenium.run(consignment_note, customer_id, serial_number, isp_checker)
+            web_automation.run(consignment_note, customer_id, serial_number, isp_checker)
+
+        elif event == 'Covid Screening':
+            print("[LOG] Clicked Covid Screening!")
+            web_automation.covid_screening()
 
         elif event == 'Clear':
             print("[LOG] Clicked Clear!")
