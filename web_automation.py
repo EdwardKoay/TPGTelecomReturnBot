@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.common.keys import Keys
 
 import xlwings as xw
 
@@ -35,7 +36,7 @@ def covid_screening():
     driver.quit()
 
 
-def run(consignment_note, customer_id, serial_number, isp_checker):
+def run(consignment_note, customer_id, serial_number, onewarehouse_checker):
     options = Options()
     options.binary_location = r'C:\Users\T6433677\AppData\Local\Mozilla Firefox\firefox.exe'
     driver = webdriver.Firefox(firefox_options=options,
@@ -53,12 +54,6 @@ def run(consignment_note, customer_id, serial_number, isp_checker):
     username = ''
     auspost_check = False
     equip_found = False
-
-    columns = {'A': serial_number,
-               'B': modem_type,
-               'H': consignment_note,
-               'C': customer_id,
-               'K': 'Edward'}
 
     # Finds the model of the modem/router and sets modem/router type
     if part_sn3 == '984':
@@ -162,7 +157,7 @@ def run(consignment_note, customer_id, serial_number, isp_checker):
         # sets variables
         below_last_row = ws.range(1, 1).end('down').row + 1
 
-        if isp_checker is True:
+        if onewarehouse_checker is True:
             driver.get('https://onewh.it.tpgtelecom.com.au:8200/OneWh/wh/orders/order_query.html')
             driver.find_element_by_xpath("//input[@id='customerId']").send_keys(customer_id)
             driver.find_element_by_xpath(
@@ -170,7 +165,7 @@ def run(consignment_note, customer_id, serial_number, isp_checker):
             driver.find_element_by_xpath(
                 "/html/body/div/div/div[3]/div[1]/table/tbody/tr[2]/td[8]/button").click()
 
-        elif isp_checker is False:
+        elif onewarehouse_checker is False:
             driver.get('https://blade.tpg.com.au/cgi-bin/ias.cgi?scr=user_query.cgi')
             driver.find_element_by_xpath(
                 "/html/body/form/center/p[2]/table/tbody/tr[2]/td[2]/table/tbody/tr[1]/td[2]/input").send_keys(
@@ -184,7 +179,7 @@ def run(consignment_note, customer_id, serial_number, isp_checker):
             driver.find_element_by_xpath(
                 "/html/body/form/center/p[6]/input[4]").click()
             username = driver.find_element_by_xpath(
-                "/html/body/center/table/tbody/tr[21]/td[2]/b").text
+                "/html/body/center/table/tbody/tr[19]/td[2]/b").text
 
         # sets the specific variables into the correct column and row of cells
         ws.range(below_last_row, 1).value = [serial_number, modem_type, customer_id, username]

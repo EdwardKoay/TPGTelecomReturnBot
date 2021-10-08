@@ -15,8 +15,7 @@ def make_window(theme):
     right_click_menu_def = [[], ['Paste', 'Exit']]
 
     input_layout = [[sg.Menu(menu_def, key='-MENU-')],
-                    [sg.Radio('TPG', "RadioDemo", default=False, size=(10, 1), k='-INPUT R1-'),
-                     sg.Radio('iiNet', "RadioDemo", default=True, size=(10, 1), k='-INPUT R2-')],
+                    [sg.Checkbox('Enable OneWarehouse', default=False, key='-INPUT enable_onewarehouse-')],
                     [sg.Text('     POST:', size=(7, 1)), sg.Input(key='-INPUT consignment_note-')],
                     [sg.Text('        CID:', size=(7, 1)), sg.Input(key='-INPUT customer_id-')],
                     [sg.Text(' SN/MAC:', size=(7, 1)), sg.Input(key='-INPUT serial_number-')],
@@ -88,8 +87,8 @@ def main():
             consignment_note = values['-INPUT consignment_note-']
             customer_id = values['-INPUT customer_id-']
             serial_number = values['-INPUT serial_number-']
-            isp_checker = values['-INPUT R2-']
-            web_automation.run(consignment_note, customer_id, serial_number, isp_checker)
+            onewarehouse_checker = values['-INPUT enable_onewarehouse-']
+            web_automation.run(consignment_note, customer_id, serial_number, onewarehouse_checker)
 
         elif event == 'Covid Screening':
             print("[LOG] Clicked Covid Screening!")
